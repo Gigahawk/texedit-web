@@ -1,6 +1,7 @@
 const container = document.querySelector('.container')
 
 function creatDivs(col , rows) {
+
     for(let i = 0;i < (col * rows); i++) {
         const div = document.createElement('div')
         container.style.gridTemplateColumns = `repeat(${col}, 1fr)`;
@@ -8,6 +9,13 @@ function creatDivs(col , rows) {
         div.style.border = '1px solid red'
         container.appendChild(div).classList.add('box')
     }
+
+    const boxs = container.querySelectorAll('div')
+    boxs.forEach(box => box.addEventListener('mouseover', changeColor))
 }
 
 creatDivs(16,16)
+
+function changeColor() {
+    
+}

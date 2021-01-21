@@ -17,5 +17,9 @@ function creatDivs(col , rows) {
 creatDivs(16,16)
 
 function changeColor() {
-    
+
+    let RNum = Math.floor(Math.random() * 256);
+    let RGB = `rgb(${RNum},${RNum},${RNum})`
+    this.style.background = RGB;
+    console.log(RGB)
 }

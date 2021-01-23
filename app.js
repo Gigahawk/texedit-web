@@ -14,12 +14,6 @@ function creatDivs(col , rows) {
 }
 
 
-
-
-
-
-
-
 function grayColor() { 
     const btn = document.createElement('button')
     btn.textContent = "Gray"
@@ -47,6 +41,7 @@ function rgbColors() {
             box.style.background = RGB;
         }))
     })
-    document.body.appendChild(btn).classList.add('btn')
+    //document.body.appendChild(btn).classList.add('btn')
 }
 rgbColors()
+

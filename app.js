@@ -1,5 +1,5 @@
 const container = document.querySelector('.container')
-window.addEventListener('onload', creatDivs(16,16));
+//window.addEventListener('onload', creatDivs(10,10));
 const boxs = container.querySelectorAll('div')
 
 function creatDivs(col , rows) {
@@ -12,11 +12,11 @@ function creatDivs(col , rows) {
     }
     // boxs.forEach(box => box.addEventListener('mouseover', changeColor))
 }
-
+creatDivs(5,5)
 
 function grayColor() { 
     const btn = document.createElement('button')
-    btn.textContent = "Gray"
+    btn.textContent = "GRAY"
     btn.addEventListener('click', () => {
         boxs.forEach(box => box.addEventListener('mouseover', ()=> {
             let RNum = Math.floor(Math.random() * 256);
@@ -41,7 +41,37 @@ function rgbColors() {
             box.style.background = RGB;
         }))
     })
-    //document.body.appendChild(btn).classList.add('btn')
+    document.body.appendChild(btn).classList.add('btn')
 }
 rgbColors()
 
+function blackColor() {
+    const btn = document.createElement('button')
+    btn.textContent = 'BLACK';
+    btn.addEventListener('click', function () {
+        boxs.forEach(box => box.addEventListener('mouseover', function() {
+            this.style.background = 'black'
+        }))
+    })
+    document.body.appendChild(btn).classList.add('btn')
+}
+blackColor() 
+
+
+function reSize(x,y) {
+    const btn = document.createElement('button')
+    btn.textContent = 'GRID SIZE'
+    btn.addEventListener('click', () => {
+        let user = prompt('WHAT SIZE YOU WANT YOUR GRID TO BE?' ,'THE CURRENT SIZE IS 16')
+        if(user !== null || user !== " "){
+            x = Number(user);
+            y = x;
+            //window.removeEventListener('onload', creatDivs)
+        }
+       
+        creatDivs(x,y)
+    })
+    document.body.appendChild(btn)
+    return;
+}
+reSize()

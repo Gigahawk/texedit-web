@@ -89,6 +89,6 @@ function reSize() {
             blackColor();
         }
     })
-    document.body.appendChild(btnSize)
+    document.body.appendChild(btnSize).classList.add('btn')
 }
 reSize()

@@ -6,6 +6,13 @@ const btnSize = document.createElement('button')
 const section = document.querySelector('.section');
 const buttonsContainer = document.querySelector('.buttons');
 
+window.onload = () => {
+    const boxs = container.querySelectorAll('.box')
+    boxs.forEach(box => box.addEventListener('mouseover', () => {
+        box.style.background = 'black'
+    }))
+}
+
 
 function creatDivs(col , rows) {
     for(let i = 0;i < (col * rows); i++) {

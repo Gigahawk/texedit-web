@@ -17,7 +17,6 @@ body {
     flex-direction: column;
     width: 100%;
     height: 100vh;
-    border: 1px solid red;
 }
 
 .checkered{
@@ -43,15 +42,6 @@ body {
     transition: none;
     -webkit-transform: scaleX(1) scaleY(1) scaleZ(1);
     transform: scaleX(1) scaleY(1) scaleZ(1);
-}
-
-.section h1 {
-    text-align: center;
-    position: absolute;
-    top: 50px;
-    left: 50%;
-    transform:translate(-50%) ;
-    font-size: 4em;
 }
 
 span {
@@ -85,14 +75,29 @@ span {
     }
 }
 
+.form_container {
+    position: absolute;
+    top: 0px;
+    padding: 10px;
+    width: 800px;
+}
+
+.palette_section {
+    position: absolute;
+    right: 0px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    flex-flow: column;
+    align-items: center;
+}
+
 .palette_container{
     width: 600px;
     height: 600px;
     display: grid;
     z-index: 100;
-    border-width: 1px;
-    border-color: black;
-    border-style: solid;
+    border: 1px solid black;
     /* background-color: rgba(0, 0, 0, .1); */
 
 }

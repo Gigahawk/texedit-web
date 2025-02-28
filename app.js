@@ -14,42 +14,92 @@ window.onload = () => {
 }
 
 
-function creatDivs(col , rows) {
-    for(let i = 0;i < (col * rows); i++) {
+function creatDivs(width , height, colorList) {
+    console.log(colorList)
+    for(let i = 0;i < (width * height); i++) {
         const div = document.createElement('div') 
-        container.style.gridTemplateColumns = `repeat(${col}, 1fr)`;
-        container.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+        if (colorList != undefined) {
+            console.log(colorList[i])
+            div.style.backgroundColor = colorList[i]
+        }
+        container.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+        container.style.gridTemplateRows = `repeat(${height}, 1fr)`;
         container.appendChild(div).classList.add('box')
     }
 }
 creatDivs(16,16)
 
 
+function factorial(num) {
+    return [...Array(num + 1).keys()].filter(
+        (i) => num % i === 0
+    );
+}
+
+function isOdd(num) {
+    return num % 2
+}
+
+function uint32ArrayToCSSColors(uint32Array) {
+    return Array.from(uint32Array, color => {
+        let a = ((color >> 24) & 0xFF) / 0x80; // Convert alpha from 0-255 to 0-1 for CSS
+        let b = (color >> 16) & 0xFF;
+        let g = (color >> 8)  & 0xFF;
+        let r = (color & 0xFF);
+
+        return `rgba(${r}, ${g}, ${b}, ${a})`;
+    });
+}
+
 document.getElementById("load_form").addEventListener("submit", function(event) {
     event.preventDefault();
 
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
-    console.log("File Name:", data.palette_file.name);
-    console.log("File Size:", data.palette_file.size, "bytes");
-    console.log("File Type:", data.palette_file.type);
+    
 
-    const reader = new FileReader();
-    reader.onload = function(event) {
+    const palette_reader = new FileReader();
+    palette_reader.onload = function(event) {
         const arrayBuffer = event.target.result; // Get ArrayBuffer
         const byteArray = new Uint8Array(arrayBuffer); // Convert to Uint8Array
-
-        console.log("Byte Array:", byteArray);
+        setPalette(byteArray, data.palette_format);
     };
-
-    reader.onerror = function(error) {
+    palette_reader.onerror = function(error) {
         console.error("Error reading file:", error);
     };
-
-    reader.readAsArrayBuffer(data.palette_file); // Read file as ArrayBuffer
+    palette_reader.readAsArrayBuffer(data.palette_file); // Read file as ArrayBuffer
 
     console.log(data.palette_file)
 })
+
+function setPalette(byteArray, format) {
+    if (format == "RGBA") {
+        console.log(byteArray)
+        let paletteArray = new Uint32Array(byteArray.buffer)
+        console.log(paletteArray)
+
+        let colorArray = uint32ArrayToCSSColors(paletteArray)
+
+        // Generate palette dimensions (as square as possible)
+        factors = factorial(paletteArray.length)
+        factor_idx = Math.floor(factors.length/2)
+        if (isOdd(factors.length)) {
+            palette_width = factors[factor_idx];
+            palette_height = factors[factor_idx];
+        } else {
+            palette_width = factors[factor_idx];
+            palette_height = factors[factor_idx + 1];
+        }
+
+        reSet();
+        creatDivs(palette_width, palette_height, colorArray);
+
+
+
+    } else {
+        console.error("Unsupported format " + format)
+    }
+}
 
 function grayColor() { 
     
@@ -103,6 +153,7 @@ function reSet() {
         box.remove();
     })
 }
+
 
 
 function reSize() {

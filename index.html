@@ -7,7 +7,7 @@
     <title>ETCH-A-SKETCH</title>
 </head>
 <body>
-    <div class="section">
+    <div class="section checkered">
         <form id="load_form">
             <label for="image_file">Image file (.bin)</label>
             <input type="file" id="image_file" name="image_file"/>
@@ -31,7 +31,9 @@
 
             <button type="submit">Load</button>
         </form>
-        <div class="container"></div>
+        <div class="palette_section">
+            <div class="palette_container"></div>
+        </div>
         <div class="buttons"></div>
     </div>
     <script src="app.js"></script>

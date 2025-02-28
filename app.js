@@ -24,6 +24,33 @@ function creatDivs(col , rows) {
 }
 creatDivs(16,16)
 
+
+document.getElementById("load_form").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(this);
+    const data = Object.fromEntries(formData.entries());
+    console.log("File Name:", data.palette_file.name);
+    console.log("File Size:", data.palette_file.size, "bytes");
+    console.log("File Type:", data.palette_file.type);
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const arrayBuffer = event.target.result; // Get ArrayBuffer
+        const byteArray = new Uint8Array(arrayBuffer); // Convert to Uint8Array
+
+        console.log("Byte Array:", byteArray);
+    };
+
+    reader.onerror = function(error) {
+        console.error("Error reading file:", error);
+    };
+
+    reader.readAsArrayBuffer(data.palette_file); // Read file as ArrayBuffer
+
+    console.log(data.palette_file)
+})
+
 function grayColor() { 
     
     const boxs = container.querySelectorAll('.box')

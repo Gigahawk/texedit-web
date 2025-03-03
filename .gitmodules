@@ -1,0 +1,3 @@
+[submodule "BitSet.js"]
+	path = BitSet.js
+	url = https://github.com/rawify/BitSet.js.git

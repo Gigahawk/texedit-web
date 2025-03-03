@@ -1,10 +1,13 @@
 const paletteContainer = document.querySelector('.palette_container')
+const imageContainer = document.querySelector('.image_container')
 const btnBlack = document.createElement('button')
 const btnRgb = document.createElement('button')
 const btnGray = document.createElement('button')
 const btnSize = document.createElement('button')
 const section = document.querySelector('.section');
 const buttonsContainer = document.querySelector('.buttons');
+
+const containerSideLength = 600;
 
 window.onload = () => {
     const boxs = paletteContainer.querySelectorAll('.box')
@@ -13,21 +16,36 @@ window.onload = () => {
     }))
 }
 
-
-function creatDivs(width , height, colorList) {
-    console.log(colorList)
-    for(let i = 0;i < (width * height); i++) {
-        const div = document.createElement('div') 
-        if (colorList != undefined) {
-            console.log(colorList[i])
-            div.style.backgroundColor = colorList[i]
+function setPixels(container, width, height, colorList) {
+    var containerHeight;
+    var containerWidth;
+    if(width >= height) {
+        containerWidth = containerSideLength;
+        containerHeight = containerSideLength*height/width;
+    } else {
+        containerHeight = containerSideLength;
+        containerWidth = containerSideLength*width/height;
+    }
+    container.style.width = `${containerWidth}px`;
+    container.style.height = `${containerHeight}px`;
+    for(let i = 0; i <  (width * height); i++) {
+        const div = document.createElement("div");
+        if(colorList != undefined) {
+            div.style.backgroundColor = colorList[i];
         }
-        paletteContainer.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
-        paletteContainer.style.gridTemplateRows = `repeat(${height}, 1fr)`;
-        paletteContainer.appendChild(div).classList.add('box')
+        container.style.gridTemplateColumns = `repeat(${width}, 1fr)`;
+        container.style.gridTemplateRows = `repeat(${height}, 1fr)`;
+        container.appendChild(div).classList.add("box");
     }
 }
-creatDivs(16,16)
+
+function setPalettePixels(width, height, colorList) {
+    setPixels(paletteContainer, width, height, colorList);
+}
+
+function setImagePixels(width, height, colorList) {
+    setPixels(imageContainer, width, height, colorList);
+}
 
 
 function factorial(num) {
@@ -51,33 +69,37 @@ function uint32ArrayToCSSColors(uint32Array) {
     });
 }
 
-document.getElementById("load_form").addEventListener("submit", function(event) {
+async function readFile(file) {
+    let result = await new Promise((resolve) => {
+        let reader = new FileReader();
+        reader.onload = (e) => resolve(reader.result);
+        reader.readAsArrayBuffer(file)
+    })
+    return new Uint8Array(result);
+}
+
+document.getElementById("load_form").addEventListener("submit", async function(event) {
     event.preventDefault();
 
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
 
-    const palette_reader = new FileReader();
-    palette_reader.onload = function(event) {
-        const arrayBuffer = event.target.result; // Get ArrayBuffer
-        const byteArray = new Uint8Array(arrayBuffer); // Convert to Uint8Array
-        setPalette(byteArray, data.palette_format);
-    };
-    palette_reader.onerror = function(error) {
-        console.error("Error reading file:", error);
-    };
-    palette_reader.readAsArrayBuffer(data.palette_file); // Read file as ArrayBuffer
+    const palette = await readFile(data.palette_file);
+    const colorArray = setPalette(palette, data.palette_format);
 
-    console.log(data.palette_file)
+    const image = await readFile(data.image_file)
+    setImage(
+        image, colorArray, parseInt(data.image_bpp),
+        parseInt(data.image_width), parseInt(data.image_height)
+    );
 })
 
 function setPalette(byteArray, format) {
+    var colorArray;
     if (format == "RGBA") {
-        console.log(byteArray)
         let paletteArray = new Uint32Array(byteArray.buffer)
-        console.log(paletteArray)
 
-        let colorArray = uint32ArrayToCSSColors(paletteArray)
+        colorArray = uint32ArrayToCSSColors(paletteArray)
 
         // Generate palette dimensions (as square as possible)
         factors = factorial(paletteArray.length)
@@ -90,22 +112,53 @@ function setPalette(byteArray, format) {
             palette_height = factors[factor_idx + 1];
         }
 
-        reSet();
-        creatDivs(palette_width, palette_height, colorArray);
-
-
-
+        resetPalette();
+        setPalettePixels(palette_width, palette_height, colorArray);
     } else {
         console.error("Unsupported format " + format)
     }
+    return colorArray;
+}
+
+function bitSetToInt(bs) {
+    let arr = bs.toArray();
+    let out = 0;
+    for (let i of arr) {
+        out += 2**i;
+    }
+    return out;
+}
+
+function setImage(imageArray, colorArray, bpp, width, height) {
+    const imageBitsLength = imageArray.length*8;
+    const imageBits = new BitSet(imageArray);
+    let imageColorArray = [];
+    for (let i = 0; i < imageBitsLength; i+=bpp) {
+        slice = imageBits.slice(i, i + bpp - 1);
+        paletteIdx = bitSetToInt(slice);
+        color = colorArray[paletteIdx]
+        imageColorArray.push(color);
+    }
+    console.logImageColorArray
+
+    resetImage();
+    setImagePixels(width, height, imageColorArray);
 }
 
 
-function reSet() {
-    const boxs = paletteContainer.querySelectorAll('.box')
+function resetContainer(container) {
+    const boxs = container.querySelectorAll('.box');
     boxs.forEach(box => {
         box.remove();
     })
+}
+
+function resetPalette() {
+    resetContainer(paletteContainer);
+}
+
+function resetImage() {
+    resetContainer(imageContainer);
 }
 
 

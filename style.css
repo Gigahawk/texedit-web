@@ -102,6 +102,25 @@ span {
 
 }
 
+.image_container {
+    width: 600px;
+    height: 600px;
+    display: grid;
+    z-index: 100;
+    border: 1px solid black;
+    /* background-color: rgba(0, 0, 0, .1); */
+}
+
+.image_section {
+    position: absolute;
+    left: 0px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    flex-flow: column;
+    align-items: center;
+}
+
 .buttons {
     width: 600px;
     position: absolute;
